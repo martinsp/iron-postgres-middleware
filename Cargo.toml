@@ -1,0 +1,13 @@
+[package]
+
+name = "iron-postgres-middleware"
+version = "0.0.1"
+authors = ["Martins Polakovs <martins.polakovs@gmail.com>"]
+
+[dependencies]
+iron = "*"
+r2d2_postgres = "*"
+r2d2 = "*"
+postgres = "*"
+
+log = "*"
