@@ -10,22 +10,20 @@ use iron::{typemap, BeforeMiddleware};
 use std::sync::Arc;
 use std::default::Default;
 use postgres::{SslMode};
-use r2d2_postgres::PostgresPoolManager;
+use r2d2_postgres::PostgresConnectionManager;
 
 pub struct PostgresMiddleware {
-  pub pool: Arc<r2d2::Pool<postgres::Connection, r2d2_postgres::Error,
-    r2d2_postgres::PostgresPoolManager, r2d2::LoggingErrorHandler>>,
+  pub pool: Arc<r2d2::Pool<r2d2_postgres::PostgresConnectionManager, r2d2::LoggingErrorHandler>>,
 }
 
-struct Value(Arc<r2d2::Pool<postgres::Connection, r2d2_postgres::Error,
-          r2d2_postgres::PostgresPoolManager, r2d2::LoggingErrorHandler>>);
+struct Value(Arc<r2d2::Pool<r2d2_postgres::PostgresConnectionManager, r2d2::LoggingErrorHandler>>);
 
 impl typemap::Key for PostgresMiddleware { type Value = Value; }
 
 impl PostgresMiddleware {
   pub fn new(pg_connection_str: &str) -> PostgresMiddleware {
     let config = Default::default();
-    let manager = PostgresPoolManager::new(pg_connection_str, SslMode::None);
+    let manager = PostgresConnectionManager::new(pg_connection_str, SslMode::None);
     let error_handler = r2d2::LoggingErrorHandler;
     let pool = Arc::new(r2d2::Pool::new(config, manager, error_handler).unwrap());
     PostgresMiddleware {
@@ -42,13 +40,13 @@ impl BeforeMiddleware for PostgresMiddleware {
 }
 
 pub trait PostgresReqExt {
-  fn db_conn(&self) -> r2d2::PooledConnection<postgres::Connection, r2d2_postgres::Error,
-    r2d2_postgres::PostgresPoolManager, r2d2::LoggingErrorHandler>;
+  fn db_conn(&self) -> r2d2::PooledConnection<r2d2_postgres::PostgresConnectionManager,
+    r2d2::LoggingErrorHandler>;
 }
 
 impl PostgresReqExt for Request {
-  fn db_conn(&self) -> r2d2::PooledConnection<postgres::Connection, r2d2_postgres::Error,
-    r2d2_postgres::PostgresPoolManager, r2d2::LoggingErrorHandler> {
+  fn db_conn(&self) -> r2d2::PooledConnection<r2d2_postgres::PostgresConnectionManager,
+    r2d2::LoggingErrorHandler> {
     let poll_value = self.extensions.get::<PostgresMiddleware>().unwrap();
     let &Value(ref poll) = poll_value;
 
