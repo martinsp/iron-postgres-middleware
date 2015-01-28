@@ -44,7 +44,7 @@ pub trait PostgresReqExt {
     r2d2::LoggingErrorHandler>;
 }
 
-impl PostgresReqExt for Request {
+impl<'a> PostgresReqExt for Request<'a> {
   fn db_conn(&self) -> r2d2::PooledConnection<r2d2_postgres::PostgresConnectionManager,
     r2d2::LoggingErrorHandler> {
     let poll_value = self.extensions.get::<PostgresMiddleware>().unwrap();
