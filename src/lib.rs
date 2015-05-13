@@ -18,7 +18,7 @@ pub struct PostgresMiddleware {
   pub pool: Arc<r2d2::Pool<r2d2_postgres::PostgresConnectionManager>>,
 }
 
-struct Value(Arc<r2d2::Pool<r2d2_postgres::PostgresConnectionManager>>);
+pub struct Value(Arc<r2d2::Pool<r2d2_postgres::PostgresConnectionManager>>);
 
 impl typemap::Key for PostgresMiddleware { type Value = Value; }
 
@@ -33,7 +33,7 @@ impl PostgresMiddleware {
   /// **Panics** if there are any errors connecting to the postgresql database.
   pub fn new(pg_connection_str: &str) -> PostgresMiddleware {
     let config = Default::default();
-    let manager = PostgresConnectionManager::new(pg_connection_str, SslMode::None);
+    let manager = PostgresConnectionManager::new(pg_connection_str, SslMode::None).unwrap();
     let error_handler = r2d2::LoggingErrorHandler;
     let pool = Arc::new(r2d2::Pool::new(config, manager, Box::new(error_handler)).unwrap());
     PostgresMiddleware {
@@ -67,7 +67,7 @@ pub trait PostgresReqExt {
   fn db_conn(&self) -> r2d2::PooledConnection<r2d2_postgres::PostgresConnectionManager>;
 }
 
-impl<'a> PostgresReqExt for Request<'a> {
+impl<'a, 'b> PostgresReqExt for Request<'a, 'b> {
   fn db_conn(&self) -> r2d2::PooledConnection<r2d2_postgres::PostgresConnectionManager> {
     let poll_value = self.extensions.get::<PostgresMiddleware>().unwrap();
     let &Value(ref poll) = poll_value;
