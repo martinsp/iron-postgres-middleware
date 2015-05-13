@@ -11,7 +11,7 @@ An attempt to create postgres middleware for [Iron](https://github.com/iron/iron
 
 ### Import
 
-    extern crate "iron-postgres-middleware" as pg_middleware;
+    extern crate iron_postgres_middleware as pg_middleware;
     use pg_middleware::{PostgresMiddleware, PostgresReqExt};
 
 ### Using middleware
