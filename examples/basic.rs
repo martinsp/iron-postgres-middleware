@@ -1,8 +1,6 @@
-#![feature(core)]
-
 extern crate iron;
 extern crate postgres;
-extern crate "iron-postgres-middleware" as pg_middleware;
+extern crate iron_postgres_middleware as pg_middleware;
 
 use iron::prelude::*;
 use iron::status;
@@ -26,7 +24,7 @@ fn main() {
 
     chain.link_before(pg_middleware);
 
-    Iron::new(chain).listen("localhost:3000").unwrap();
+    Iron::new(chain).http("localhost:3000").unwrap();
 }
 
 fn name_list(req: &mut Request) -> IronResult<Response> {
@@ -40,7 +38,7 @@ fn name_list(req: &mut Request) -> IronResult<Response> {
         let id: i32 = row.get(0);
         let name: String = row.get(1);
         let name_format = format!("{}: {}\n", id, name);
-        resp_str.push_str(name_format.as_slice());
+        resp_str.push_str(&name_format);
     }
 
     Ok(Response::with((status::Ok, resp_str)))
