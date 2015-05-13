@@ -20,12 +20,12 @@ An attempt to create postgres middleware for [Iron](https://github.com/iron/iron
       let mut router = Router::new();
       router.get("/", handler);
 
-      let mut c = ChainBuilder::new(router);
+      let mut c = Chain::new(router);
 
       let pg_middleware = PostgresMiddleware::new("postgres://user@localhost/db_name");
       c.link_before(pg_middleware);
 
-      Iron::new(c).listen(SocketAddr { ip: Ipv4Addr(127, 0, 0, 1), port: 3000 }).unwrap();
+      Iron::new(c).http("localhost:3000").unwrap();
     }
 
     fn handler(req: &mut Request) -> IronResult<Response> {
