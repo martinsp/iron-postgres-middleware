@@ -8,7 +8,6 @@ use iron::prelude::*;
 use iron::{typemap, BeforeMiddleware};
 
 use std::sync::Arc;
-use std::default::Default;
 use postgres::{SslMode};
 use r2d2_postgres::PostgresConnectionManager;
 
@@ -32,10 +31,11 @@ impl PostgresMiddleware {
   ///
   /// **Panics** if there are any errors connecting to the postgresql database.
   pub fn new(pg_connection_str: &str) -> PostgresMiddleware {
-    let config = Default::default();
+    let config = r2d2::Config::builder()
+        .error_handler(Box::new(r2d2::LoggingErrorHandler))
+        .build();
     let manager = PostgresConnectionManager::new(pg_connection_str, SslMode::None).unwrap();
-    let error_handler = r2d2::LoggingErrorHandler;
-    let pool = Arc::new(r2d2::Pool::new(config, manager, Box::new(error_handler)).unwrap());
+    let pool = Arc::new(r2d2::Pool::new(config, manager).unwrap());
     PostgresMiddleware {
       pool: pool,
     }
