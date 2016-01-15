@@ -9,8 +9,7 @@ use iron::{typemap, BeforeMiddleware};
 
 use std::error::Error;
 use std::sync::Arc;
-use postgres::{SslMode};
-use r2d2_postgres::PostgresConnectionManager;
+use r2d2_postgres::{SslMode, PostgresConnectionManager};
 
 /// Iron middleware that allows for postgres connections within requests.
 pub struct PostgresMiddleware {
