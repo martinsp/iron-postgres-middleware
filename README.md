@@ -27,7 +27,7 @@ fn main() {
 
   let mut c = Chain::new(router);
 
-  let pg_middleware = PostgresMiddleware::new("postgres://user@localhost/db_name");
+  let pg_middleware = PostgresMiddleware::new("postgres://user@localhost/db_name").unwrap();
   c.link_before(pg_middleware);
 
   Iron::new(c).http("localhost:3000").unwrap();
