@@ -9,7 +9,7 @@ use iron::{typemap, BeforeMiddleware};
 
 use std::error::Error;
 use std::sync::Arc;
-use r2d2_postgres::{SslMode, PostgresConnectionManager};
+use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 
 /// Iron middleware that allows for postgres connections within requests.
 pub struct PostgresMiddleware {
@@ -34,7 +34,7 @@ impl PostgresMiddleware {
     let config = r2d2::Config::builder()
         .error_handler(Box::new(r2d2::LoggingErrorHandler))
         .build();
-    let manager = try!(PostgresConnectionManager::new(pg_connection_str, SslMode::None));
+    let manager = try!(PostgresConnectionManager::new(pg_connection_str, TlsMode::None));
     let pool = Arc::new(try!(r2d2::Pool::new(config, manager)));
     Ok(PostgresMiddleware {
       pool: pool,
