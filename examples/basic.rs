@@ -1,5 +1,4 @@
 extern crate iron;
-extern crate postgres;
 extern crate iron_postgres_middleware as pg_middleware;
 
 use iron::prelude::*;

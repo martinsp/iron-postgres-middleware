@@ -1,15 +1,13 @@
 extern crate iron;
 
-extern crate r2d2;
 extern crate r2d2_postgres;
-extern crate postgres;
 
 use iron::prelude::*;
 use iron::{typemap, BeforeMiddleware};
 
 use std::error::Error;
 use std::sync::Arc;
-use r2d2_postgres::{TlsMode, PostgresConnectionManager};
+use r2d2_postgres::{TlsMode, PostgresConnectionManager, r2d2};
 
 /// Iron middleware that allows for postgres connections within requests.
 pub struct PostgresMiddleware {
